@@ -1,8 +1,10 @@
 "use client";
 import { useRef, useState, type CSSProperties, type FormEvent } from "react";
 import Link from "./link";
-import { ArrowUpRight, CircleAlert, Mail } from "lucide-react";
-import { services, articles } from "@/lib/content";
+import { ArrowUpRight, CircleAlert, CircleCheck, Send } from "lucide-react";
+import { sendEnquiry } from "@/lib/send-enquiry";
+import { insightsArticles } from "@/lib/insights-content";
+import { contactContent, clientTypes, enquiryAreas, virtualAssetActivities, referralSources } from "@/lib/contact-content";
 import "@/app/pages/insights-contact.css";
 
 const order = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -10,7 +12,7 @@ const order = (i: number) => ({ "--i": i }) as CSSProperties;
 /* ---------- Insights: editorial layout ----------
    The newest piece in the current filter is a large feature card; the rest sit beside it as compact
    cards with a thumbnail. The lead story (articles[0]) and Video items appear elsewhere on the page. */
-const archive = articles.filter((a, i) => i > 0 && a.category !== "Video");
+const archive = insightsArticles.slice(1);
 const filters = ["All", "Analysis", "Interviews"] as const;
 type Filter = typeof filters[number];
 const kind = (c: string) => c === "Interviews" ? "Interview" : c;
@@ -34,7 +36,7 @@ export function InsightsExplorer() {
      <span className="ms-ins-feature-meta">{feature.source} · <time>{feature.date}</time></span>
      <h3>{feature.title}</h3>
      <p>{feature.description}</p>
-     <span className="ms-ins-feature-read">Read the piece <span className="ms-ins-feature-arrow"><ArrowUpRight size={18} /></span></span>
+     <span className="ms-ins-feature-read">Read article <span className="ms-ins-feature-arrow"><ArrowUpRight size={18} /></span></span>
     </div>
     <span className="sr-only"> (opens in a new tab)</span>
    </a>}
@@ -43,8 +45,9 @@ export function InsightsExplorer() {
      <a className="ms-ins-card" href={a.url} target="_blank" rel="noreferrer">
       <span className="ms-ins-card-thumb" aria-hidden="true"><img src={`/images/${a.image}`} alt="" /></span>
       <span className="ms-ins-card-text">
-       <span className="ms-ins-card-meta">{kind(a.category)} · <time>{a.date}</time></span>
+       <span className="ms-ins-card-meta">{a.source} · <time>{a.date}</time></span>
        <span className="ms-ins-card-title">{a.title}</span>
+       <span className="ms-ins-card-summary">{a.description}</span>
       </span>
       <ArrowUpRight className="ms-ins-card-go" size={18} aria-hidden="true" />
       <span className="sr-only"> ({a.source}, opens in a new tab)</span>
@@ -56,50 +59,45 @@ export function InsightsExplorer() {
 }
 
 
-/* ---------- Contact: enquiry form that composes an email ----------
-   There is no form backend, so the form is honest about what it does: after validation it
-   opens the visitor's email application with a pre-filled message to the firm. */
-const firmEmail = "info@mariamsaleemlaw.com";
-const vaActivities = ["Advisory", "Broker-Dealer", "Custody", "Exchange", "Lending and Borrowing", "Management and Investment", "Transfer and Settlement", "Issuance", "Derivatives and Leverage", "Mining Services"];
-const MESSAGE_MIN = 20, MESSAGE_MAX = 1500;
-type Field = "name" | "email" | "company" | "phone" | "location" | "area" | "activity" | "message" | "consent";
-const required: Field[] = ["name", "email", "area", "message", "consent"];
+/* ---------- Contact: enquiry form ----------
+   After validation the enquiry is sent straight to the firm's inbox (lib/send-enquiry.ts). */
+const firmEmail = contactContent.email;
+const MESSAGE_MAX = 1500;
+type Field = "name" | "email" | "company" | "phone" | "country" | "clientType" | "referral" | "area" | "activity" | "message" | "consent";
+const required: Field[] = ["name", "email", "clientType", "area", "consent"];
 
 type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 function messageFor(el: Control): string {
- // The message length is checked on trimmed text so a row of spaces does not pass.
- if (el.name === "message") { const n = el.value.trim().length; el.setCustomValidity(n > 0 && n < MESSAGE_MIN ? "short" : ""); }
+ if (el.name === "name") el.setCustomValidity(el.value.trim() ? "" : "missing");
  const v = el.validity;
  if (v.valid) return "";
  switch (el.name as Field) {
   case "name": return "Please enter your full name.";
   case "email": return v.valueMissing ? "Please enter your email address." : "Please enter a valid email address, for example name@company.com.";
-  case "area": return "Please choose an area of interest.";
-  case "message": return v.valueMissing ? "Please tell us briefly how we can help." : `Please write at least ${MESSAGE_MIN} characters (currently ${el.value.trim().length}).`;
+  case "clientType": return "Please choose the option that describes you.";
+  case "area": return "Please choose how we can help.";
   case "consent": return "Please confirm you agree to the privacy notice.";
   default: return "Please check this field.";
  }
 }
 
-/** Builds the mailto: URL for an enquiry. Exported so it can be checked in isolation. */
-function buildEnquiryMailto(data: Record<string, string>) {
- const area = data.area === "other" ? "Other / Not sure yet" : services.find(s => s.slug === data.area)?.title ?? data.area;
- const lines = [
-  `Name: ${data.name}`,
-  `Email: ${data.email}`,
-  data.company ? `Company: ${data.company}` : null,
-  data.phone ? `Phone: ${data.phone}` : null,
-  data.location ? `Location: ${data.location}` : null,
-  `Area of interest: ${area}`,
-  data.activity ? `Virtual asset activity: ${data.activity}` : null,
-  "",
-  "Message:",
-  data.message.split(/\r?\n/).join("\r\n"),
-  "",
-  "I agree to the use of my details to respond to this enquiry, as described in the privacy notice.",
- ].filter((line): line is string => line !== null);
- const subject = `Enquiry: ${area} – ${data.name}`;
- return `mailto:${firmEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\r\n"))}`;
+/** Turns the form values into the email the firm receives. */
+function buildEnquiry(data: Record<string, string>) {
+ const area = enquiryAreas.find(([value]) => value === data.area)?.[1] ?? data.area;
+ const fields: Record<string, string> = {
+  "Name": data.name,
+  "Email": data.email,
+  "I am a": data.clientType,
+  ...(data.company ? { "Company": data.company } : {}),
+  ...(data.phone ? { "Phone": data.phone } : {}),
+  ...(data.country ? { "Country": data.country } : {}),
+  "How can we help?": area,
+  ...(data.area === "virtual-assets" && data.activity ? { "Virtual asset activity": data.activity } : {}),
+  ...(data.referral ? { "How did you hear about us?": data.referral } : {}),
+  "Message": data.message || "(no message)",
+  "Consent": "Agreed to the use of these details to respond to this enquiry, as described in the privacy notice.",
+ };
+ return { subject: `Website enquiry: ${area} – ${data.name}`, fields };
 }
 
 export function ContactForm() {
@@ -108,7 +106,7 @@ export function ContactForm() {
  const [attempted, setAttempted] = useState(false);
  const [area, setArea] = useState("");
  const [length, setLength] = useState(0);
- const [composed, setComposed] = useState(false);
+ const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
  const check = (el: EventTarget | null) => {
   if (!attempted || !el || !("name" in el)) return;
@@ -130,12 +128,14 @@ export function ContactForm() {
    if (msg) { next[name] = msg; first ??= el; }
   }
   setErrors(next);
-  if (first) { setComposed(false); first.focus(); return; }
+  if (first) { first.focus(); return; }
   const data = Object.fromEntries([...new FormData(form).entries()].map(([k, v]) => [k, String(v).trim()]));
-  const url = buildEnquiryMailto(data);
-  (window as Window & { __lastMailto?: string }).__lastMailto = url;
-  setComposed(true);
-  window.location.href = url;
+  if (data._honey) return; // filled only by spam bots
+  const { subject, fields } = buildEnquiry(data);
+  setStatus("sending");
+  sendEnquiry(subject, fields, data.email)
+   .then(() => { setStatus("sent"); form.reset(); setArea(""); setLength(0); setAttempted(false); })
+   .catch(() => setStatus("error"));
  };
 
  const field = (name: Field) => ({
@@ -149,38 +149,52 @@ export function ContactForm() {
  return <form ref={formRef} className="ms-contact-form" noValidate onSubmit={submit} aria-labelledby="enquiry-title"
   onChange={e => { const t = e.target as unknown as Control; if (t.name === "message") setLength(t.value.trim().length); if (attempted && errors[t.name as Field]) check(t); }}>
   <div className="ms-contact-form-head">
-   <h3 className="ms-kicker" id="enquiry-title">Enquiry</h3>
+   <h3 className="ms-kicker" id="enquiry-title">{contactContent.formHeading}</h3>
    <p>Fields marked <span aria-hidden="true">*</span><span className="sr-only">with an asterisk</span> are required.</p>
   </div>
   <div className="ms-contact-grid">
    <div className="ms-contact-field ms-span-3">
-    <label htmlFor="enquiry-name">Full name <span aria-hidden="true">*</span></label>
+    <label htmlFor="enquiry-name">Name <span aria-hidden="true">*</span></label>
     <input {...field("name")} autoComplete="name" required maxLength={120} placeholder="Your full name" />
     {error("name")}
    </div>
    <div className="ms-contact-field ms-span-3">
-    <label htmlFor="enquiry-email">Email address <span aria-hidden="true">*</span></label>
+    <label htmlFor="enquiry-email">Email <span aria-hidden="true">*</span></label>
     <input {...field("email")} type="email" autoComplete="email" required maxLength={254} placeholder="name@company.com" />
     {error("email")}
    </div>
    <div className="ms-contact-field ms-span-2">
-    <label htmlFor="enquiry-company">Company</label>
+    <label htmlFor="enquiry-company">Company name</label>
     <input {...field("company")} autoComplete="organization" maxLength={180} />
    </div>
    <div className="ms-contact-field ms-span-2">
-    <label htmlFor="enquiry-phone">Phone</label>
+    <label htmlFor="enquiry-phone">Phone, with country code</label>
     <input {...field("phone")} type="tel" autoComplete="tel" maxLength={40} placeholder="With country code" />
    </div>
    <div className="ms-contact-field ms-span-2">
-    <label htmlFor="enquiry-location">Location</label>
-    <input {...field("location")} autoComplete="address-level2" maxLength={120} placeholder="City, country" />
+    <label htmlFor="enquiry-country">Country</label>
+    <input {...field("country")} autoComplete="country-name" maxLength={120} />
+   </div>
+   <div className="ms-contact-field ms-span-3">
+    <label htmlFor="enquiry-clientType">I am a <span aria-hidden="true">*</span></label>
+    <select {...field("clientType")} defaultValue="" required>
+     <option value="" disabled>Select an option</option>
+     {clientTypes.map(type => <option key={type} value={type}>{type}</option>)}
+    </select>
+    {error("clientType")}
+   </div>
+   <div className="ms-contact-field ms-span-3">
+    <label htmlFor="enquiry-referral">How did you hear about us?</label>
+    <select {...field("referral")} defaultValue="">
+     <option value="">Select an option</option>
+     {referralSources.map(source => <option key={source} value={source}>{source}</option>)}
+    </select>
    </div>
    <div className={`ms-contact-field ${area === "virtual-assets" ? "ms-span-3" : "ms-span-6"}`}>
-    <label htmlFor="enquiry-area">Area of interest <span aria-hidden="true">*</span></label>
+    <label htmlFor="enquiry-area">How can we help? <span aria-hidden="true">*</span></label>
     <select {...field("area")} required value={area} onChange={e => setArea(e.target.value)}>
-     <option value="" disabled>Select an area</option>
-     {services.map(s => <option key={s.slug} value={s.slug}>{s.title}</option>)}
-     <option value="other">Other / Not sure yet</option>
+     <option value="" disabled>Select an option</option>
+     {enquiryAreas.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
     </select>
     {error("area")}
    </div>
@@ -188,15 +202,15 @@ export function ContactForm() {
     <label htmlFor="enquiry-activity">Virtual asset activity <span className="ms-contact-optional">(optional)</span></label>
     <select {...field("activity")} defaultValue="">
      <option value="">Select an activity</option>
-     {vaActivities.map(a => <option key={a} value={a}>{a}</option>)}
+     {virtualAssetActivities.map(a => <option key={a} value={a}>{a}</option>)}
     </select>
    </div>}
    <div className="ms-contact-field ms-span-6">
     <div className="ms-contact-label-row">
-     <label htmlFor="enquiry-message">How can we help? <span aria-hidden="true">*</span></label>
+     <label htmlFor="enquiry-message">Tell us about your matter</label>
      <span className="ms-contact-count" aria-hidden="true">{length} / {MESSAGE_MAX}</span>
     </div>
-    <textarea {...field("message")} required minLength={MESSAGE_MIN} maxLength={MESSAGE_MAX} rows={3} placeholder="A brief overview of your business and the question in front of you" />
+    <textarea {...field("message")} maxLength={MESSAGE_MAX} rows={3} placeholder="A brief overview of your business and the question in front of you" />
     {error("message")}
    </div>
    <div className="ms-contact-field ms-span-6">
@@ -207,10 +221,13 @@ export function ContactForm() {
     {error("consent")}
    </div>
   </div>
+  <input type="text" name="_honey" tabIndex={-1} autoComplete="off" aria-hidden="true" className="ms-contact-trap" />
   <div className="ms-contact-actions">
-   <button type="submit" className="ms-btn ms-btn-light">Compose email <Mail size={17} aria-hidden="true" /></button>
-   <p>Opens your email application with your details filled in.</p>
+   <button type="submit" className="ms-btn ms-btn-light" disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send Enquiry"} <Send size={17} aria-hidden="true" /></button>
   </div>
-  {composed && <p className="ms-contact-composed" role="status">Your email application should now open with the enquiry ready to send. If it does not, write to <a href={`mailto:${firmEmail}`}>{firmEmail}</a>.</p>}
+  <div role="status" aria-live="polite">
+   {status === "sent" && <p className="ms-contact-composed is-sent"><CircleCheck size={18} aria-hidden="true" />Thank you. Your enquiry has been sent and we will be in touch shortly.</p>}
+   {status === "error" && <p className="ms-contact-composed is-error"><CircleAlert size={18} aria-hidden="true" />Your enquiry could not be sent. Please try again, or email us at <a href={`mailto:${firmEmail}`}>{firmEmail}</a>.</p>}
+  </div>
  </form>;
 }

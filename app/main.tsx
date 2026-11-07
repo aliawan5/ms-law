@@ -1,45 +1,42 @@
-import { createRoot } from "react-dom/client";
-import type { ReactNode } from "react";
-import { HomePage, AboutPage, TeamPage, ServicesPage, ServiceDetailPage, InsightsPage, ContactPage, PrivacyPage } from "@/components/site/pages";
-import { SiteHeader, SiteFooter, MotionController } from "@/components/site/shell";
-import { services } from "@/lib/content";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { currentPath } from "@/lib/routes";
-import { homeMeta, legalServiceSchema, faqSchema } from "@/lib/home-content";
-import NotFound from "./not-found";
+import { resolvePage, App, SOCIAL_IMAGE } from "./site";
 import "./brand.css";
 
-const pages: Record<string, { title: string; description: string; content: ReactNode }> = {
-  "/": { title: homeMeta.title, description: homeMeta.description, content: <HomePage /> },
-  "/about": { title: "About", description: "MS Law is a specialist advisory practice in Islamabad combining virtual assets expertise with established cross-border transaction credentials.", content: <AboutPage /> },
-  "/our-team": { title: "Our Team", description: "The people of MS Law: leadership and associate counsel in virtual assets, fintech and corporate transactional law.", content: <TeamPage /> },
-  "/services": { title: "Services", description: "Virtual assets and regulation, cross-border transactions, strategic corporate counsel, and payments and market entry.", content: <ServicesPage /> },
-  "/insights-and-media": { title: "Insights & Media", description: "Columns, interviews and broadcast appearances on digital assets, fintech regulation and Pakistan’s financial infrastructure.", content: <InsightsPage /> },
-  "/contact": { title: "Contact", description: "Start a conversation with MS Law about your business, your challenge or your next chapter.", content: <ContactPage /> },
-  "/privacy": { title: "Privacy & legal", description: "How MS Law handles enquiries and information shared through this website.", content: <PrivacyPage /> },
+const page = resolvePage(currentPath());
+
+/* Head tags. Every page is prerendered with these already in place (scripts/prerender.mjs);
+   this keeps them correct when a page is opened from a host's fallback copy of another page. */
+const head = document.head;
+const meta = (attr: "name" | "property", key: string, content: string) => {
+  let tag = head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+  if (!tag) { tag = document.createElement("meta"); tag.setAttribute(attr, key); head.append(tag); }
+  tag.content = content;
 };
-const path = currentPath();
-const service = services.find(item => path === `/services/${item.slug}`);
-const page = pages[path] ?? (service
-  ? { title: service.title, description: service.description, content: <ServiceDetailPage slug={service.slug} /> }
-  : { title: "Page not found", description: "The page you are looking for could not be found.", content: <NotFound /> });
-document.documentElement.classList.toggle("is-home", path === "/");
-document.documentElement.classList.toggle("is-about", path === "/about");
-document.documentElement.classList.toggle("is-services", path === "/services" || path.startsWith("/services/"));
-document.title = path === "/" ? page.title : `${page.title} | MS Law`;
-document.querySelector('meta[name="description"]')?.setAttribute("content", page.description);
-document.querySelector('meta[property="og:title"]')?.setAttribute("content", document.title);
-document.querySelector('meta[property="og:description"]')?.setAttribute("content", page.description);
-if (path === "/") {
-  const canonical = document.createElement("link");
-  canonical.rel = "canonical"; canonical.href = homeMeta.url;
-  document.head.append(canonical);
-  for (const schema of [legalServiceSchema, faqSchema]) {
-    const tag = document.createElement("script");
-    tag.type = "application/ld+json"; tag.textContent = JSON.stringify(schema);
-    document.head.append(tag);
-  }
+document.documentElement.className = page.htmlClass;
+document.title = page.title;
+meta("name", "description", page.description);
+meta("property", "og:title", page.title);
+meta("property", "og:description", page.description);
+meta("property", "og:image", SOCIAL_IMAGE);
+let canonical = head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+if (page.canonical) {
+  if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; head.append(canonical); }
+  canonical.href = page.canonical;
+  meta("property", "og:url", page.canonical);
+} else {
+  canonical?.remove();
+  head.querySelector('meta[property="og:url"]')?.remove();
 }
-createRoot(document.getElementById("root")!).render(<>
-  <a className="skip-link" href="#main">Skip to content</a>
-  <SiteHeader /><main id="main">{page.content}</main><SiteFooter /><MotionController />
-</>);
+const wanted = new Set(page.schemas.map(([id]) => id));
+head.querySelectorAll<HTMLScriptElement>('script[type="application/ld+json"]').forEach(tag => { if (!wanted.has(tag.id)) tag.remove(); });
+for (const [id, schema] of page.schemas) {
+  const tag = head.querySelector<HTMLScriptElement>(`#${id}`) ?? document.createElement("script");
+  tag.id = id; tag.type = "application/ld+json"; tag.textContent = JSON.stringify(schema);
+  head.append(tag);
+}
+
+const root = document.getElementById("root")!;
+// Use the prerendered HTML when it is for this page; otherwise render from scratch.
+if (root.hasChildNodes() && root.dataset.path === page.path) hydrateRoot(root, <App page={page} />);
+else { root.textContent = ""; createRoot(root).render(<App page={page} />); }

@@ -87,7 +87,6 @@
  .ms-ins-tabs button{padding:0 8px}
 }
 
-
 /* Rows enter in sequence on first view and again whenever the filter or search changes. */
 
 /* ---------- Insights: speaking & broadcast reel ---------- */
@@ -157,9 +156,7 @@ a.ms-ins-tile:focus-visible{outline:2px solid var(--steel);outline-offset:3px}
 .ms-contact-email-link:hover .ms-contact-email-arrow{transform:translate(4px,-4px)}
 .ms-contact-copy{align-self:flex-end;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:0 14px;border:1px solid var(--mist-line);border-radius:100px;background:#fff;color:var(--navy-900);font-size:14px;font-weight:600;transition:background .3s,border-color .3s}
 .ms-contact-copy:hover{background:var(--mist);border-color:var(--line-strong)}
-.ms-contact-notes{list-style:none;margin:clamp(18px,3vh,28px) 0 0;padding:0;display:grid;gap:clamp(10px,1.6vh,14px)}
-.ms-contact-notes li{display:flex;gap:12px;max-width:440px;font-size:14px;line-height:1.6;color:var(--steel-600)}
-.ms-contact-notes svg{margin-top:2px;color:var(--navy-900)}
+
 .ms-contact-intro.will-reveal{opacity:1;transform:none}
 .ms-contact-intro.will-reveal>*{opacity:0;transform:translateY(20px)}
 .ms-contact-intro.revealed>*{opacity:1;transform:none;transition:opacity .8s ease,transform .9s var(--ms-ease)}
@@ -278,6 +275,26 @@ a.ms-ins-tile:focus-visible{outline:2px solid var(--steel);outline-offset:3px}
 @keyframes ms-ins-row-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .ms-ins-feature-media img{object-position:center 22%}
 .ms-ins-ed-grid.is-single .ms-ins-feature{flex-direction:row}
+
+/* The supplied summaries stay inside the existing editorial cards. */
+.ms-ins-archive .ms-ins-ed-grid{height:auto;min-height:clamp(340px,calc(100svh - 430px),540px)}
+.ms-ins-archive .ms-ins-feature-media{min-height:180px}
+.ms-ins-archive .ms-ins-feature p{display:block}
+.ms-ins-card-summary{display:block;font-size:13px;line-height:1.55;color:var(--body-ink)}
+.ms-ins-archive .ms-ins-card-title{display:block;overflow:visible;-webkit-line-clamp:unset}
+.ms-ins-tile{position:relative}
+.ms-ins-newsletter{max-width:430px;color:var(--body-ink)}
+.ms-ins-newsletter h3{font-size:22px;line-height:1.3;color:var(--navy-900)}
+.ms-ins-newsletter p{margin-top:10px;font-size:16px;line-height:1.7}
+.ms-ins-newsletter>a{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:15px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
+.ms-ins-other-writing{margin-top:48px}
+.ms-ins-other-writing>h3{font-size:clamp(22px,2.8vw,28px);line-height:1.35;margin-bottom:24px}
+@media(max-width:900px){
+ .ms-ins-archive .ms-ins-ed-grid{min-height:0}
+ .ms-footer.has-insights-copy .ms-cta-card{grid-template-columns:minmax(0,1fr)}
+ .ms-footer.has-insights-copy .ms-footer-cta-side{min-width:0}
+ .ms-footer.has-insights-copy .ms-footer-mail{overflow-wrap:anywhere}
+}
 .ms-ins-ed-grid.is-single .ms-ins-feature-media{flex:0 0 46%}
 .ms-ins-ed-grid.is-single .ms-ins-feature-media::after{background:linear-gradient(90deg,transparent 50%,var(--navy-900))}
 .ms-ins-ed-grid.is-single .ms-ins-feature-body{flex:1;justify-content:center;padding:clamp(24px,4vh,48px)}
@@ -285,3 +302,10 @@ a.ms-ins-tile:focus-visible{outline:2px solid var(--steel);outline-offset:3px}
  .ms-ins-ed-grid.is-single .ms-ins-feature{flex-direction:column}
  .ms-ins-ed-grid.is-single .ms-ins-feature-media{flex:none}
 }
+
+/* Direct-send states and spam trap */
+.ms-contact-trap{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}
+.ms-contact-composed{display:flex;align-items:flex-start;gap:10px}
+.ms-contact-composed svg{flex-shrink:0;margin-top:2px}
+.ms-contact-composed.is-sent{border-left-color:#b8945b}
+.ms-contact-composed.is-error{border-left-color:#c2564a}

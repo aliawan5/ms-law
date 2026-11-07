@@ -1,0 +1,19 @@
+/* Styles for the requested popup only; existing homepage design is unchanged. */
+.ms-brief-trigger{border:0;background:none;cursor:pointer;border-bottom:1px solid color-mix(in srgb,var(--steel) 40%,transparent)}
+.ms-brief-dialog{position:fixed;width:min(560px,calc(100% - 32px));max-height:calc(100svh - 40px);margin:auto;padding:40px;border:1px solid var(--mist-line);border-radius:24px;background:var(--mist);color:var(--navy-900);box-shadow:0 30px 100px #0005;overflow:auto}
+.ms-brief-dialog::backdrop{background:#0f1e33bb;backdrop-filter:blur(6px)}
+.ms-brief-dialog h2{padding-right:22px;font-size:30px;line-height:1.2;letter-spacing:-.035em;font-weight:500}
+.ms-brief-dialog>p{margin-top:14px;font-size:14px;color:var(--body-ink);line-height:1.7}
+.ms-brief-close{position:absolute;right:14px;top:14px;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#fff;color:var(--navy-900)}
+.ms-brief-form{display:grid;gap:15px;margin-top:24px}
+.ms-brief-form>label{display:grid;gap:6px;font-size:13px;font-weight:600}
+.ms-brief-form input:not([type=checkbox]),.ms-brief-form textarea{width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;font-size:15px}
+.ms-brief-form textarea{resize:vertical}
+.ms-brief-form .ms-brief-consent{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.6;font-weight:400}
+.ms-brief-consent input{margin:4px 0 0;accent-color:var(--navy-900)}
+.ms-brief-form a{text-decoration:underline;text-underline-offset:3px}
+.ms-brief-form .ms-btn{justify-content:center;border:0}
+.ms-brief-form [role=status]{font-size:13px;line-height:1.7;color:var(--body-ink)}
+html:has(.ms-brief-dialog[open]){overflow:hidden}
+
+@media(max-width:640px){.ms-brief-dialog{padding:32px 22px}.ms-brief-dialog h2{font-size:26px}}

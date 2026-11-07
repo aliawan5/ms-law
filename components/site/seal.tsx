@@ -1,7 +1,7 @@
 import { useId } from "react";
 import type { LucideIcon } from "lucide-react";
 
-const sealText = "MARIAM SALEEM · FOUNDING PARTNER · MS LAW · ISLAMABAD · ";
+const sealText = "MARIAM SALEEM · FOUNDER · MS LAW · ISLAMABAD · ";
 
 /** Brand seal: the monogram (or a page icon) draws in while the ring text turns slowly. `light` is for white backgrounds. */
 export function BrandSeal({ light = false, text, icon: Icon }: { light?: boolean; text?: string; icon?: LucideIcon }) {

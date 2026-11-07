@@ -44,13 +44,12 @@
 .ms-team-lead-copy.will-reveal>*{opacity:0;transform:translateY(22px)}
 .ms-team-lead-copy.revealed>*{opacity:1;transform:none;transition:opacity .8s ease calc(.35s + var(--i) * .1s),transform .9s var(--ms-ease) calc(.35s + var(--i) * .1s)}
 
-
 /* ---------- 3. Founder note: navy band, oversized glyph, words arrive one by one ---------- */
 .ms-team-note{position:relative;isolation:isolate;overflow:hidden;color:#fff;background:radial-gradient(ellipse 70% 55% at 50% 0%,var(--navy-900) 0%,color-mix(in srgb,var(--navy-900) 0%,transparent) 70%),var(--navy-900)}
 .ms-team-note-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
 .ms-team-note-top{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px 22px}
 .ms-section.ms-team-note h2.ms-kicker{margin:0;font-size:12px;font-weight:600;letter-spacing:.18em;line-height:1.4}
-.ms-team-draft{display:inline-block;padding:6px 14px;border:1px dashed var(--steel);border-radius:100px;font-size:13px;font-weight:600;letter-spacing:.04em;line-height:1.5;color:var(--steel)}
+
 .ms-team-note-figure{margin:clamp(28px,5vh,52px) 0 0;display:flex;flex-direction:column;align-items:center}
 /* The glyph's ink sits .145em to .335em down its line box: crop the box to the ink. */
 .ms-team-note-glyph{display:block;height:.335em;margin:-.145em 0 clamp(20px,3.6vh,34px);font-size:clamp(300px,52vh,520px);font-weight:200;line-height:1;color:var(--steel);pointer-events:none;user-select:none}

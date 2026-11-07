@@ -9,7 +9,7 @@ const clauses: Clause[] = [
  {
   id: "enquiries", title: "Enquiries and personal information", short: "Enquiries",
   body: <>
-   <p>Enquiries are made by email. The email links on this website open your own email application, and correspondence is handled directly by the firm.</p>
+   <p>Enquiries sent through the forms on this website are delivered to the firm’s inbox, info@mariamsaleemlaw.com, by FormSubmit (formsubmit.co), a form delivery service. You can also email the firm directly.</p>
    <p>Please do not include confidential documents, identity documents, financial account details or other sensitive personal information in a first enquiry.</p>
   </>,
  },

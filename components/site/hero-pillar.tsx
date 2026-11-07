@@ -39,7 +39,7 @@ export function HeroPillar() {
    <path className="ms-art-line" pathLength={1} d="M78 470h144M60 490h180M44 510h212" style={v(2)} />
   </svg>
   <Notes items={[
-   { x: 96, y: 410, side: "left", label: "Foundation", title: "15+ years of practice", d: 2.6 },
+   { x: 96, y: 410, side: "left", label: "Foundation", title: "20+ years of practice", d: 2.6 },
    { x: 204, y: 334, side: "right", label: "Base", title: "Based in Islamabad", d: 2.9 },
    { x: 96, y: 258, side: "left", label: "Credentials", title: "Proven transaction record", d: 3.2 },
    { x: 204, y: 182, side: "right", label: "Frontier", title: "Virtual assets pioneer", d: 3.5 },

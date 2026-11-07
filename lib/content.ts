@@ -19,7 +19,10 @@ export const articles: Article[] = [
  { title: "A new digital order", category: "Analysis", date: "12 August 2025", source: "The News International", description: "A closer look at the architecture of virtual asset regulation in Pakistan.", url: "https://www.thenews.com.pk/print/1368111-a-new-digital-order", image: "columns.jpg" },
  { title: "Regulating crypto", category: "Analysis", date: "19 April 2025", source: "The News International", description: "Considering the legal questions raised by borderless digital finance.", url: "https://www.thenews.com.pk/print/1302803-regulating-crypto", image: "architecture.jpg" },
 ];
+/** Mariam Saleem's personal profile (Our Team page). */
 export const linkedin = "https://www.linkedin.com/in/mariam-saleem-855220285/";
+/** The firm's company page (footer icon); confirmed by the client. */
+export const firmLinkedin = "https://www.linkedin.com/company/mslaw/";
 // TODO: replace with the firm's real profile URLs; they were not in the reference content.
 export const instagram = "https://www.instagram.com/";
 export const xProfile = "https://x.com/";

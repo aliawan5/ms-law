@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Mic, Newspaper, Play, Tv } from "lucide-react";
-import { articles, media } from "@/lib/content";
+import { insightsArticles as articles, insightsMedia as media, insightsContent, environmentalArticles } from "@/lib/insights-content";
 import { PageHero } from "./ui";
 import { InsightsExplorer } from "./interactive";
 import "@/app/pages/insights-contact.css";
@@ -10,15 +10,31 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 
 export function InsightsPage() {
  return <>
-  <PageHero label="Insights & Media" title="A considered view" italic="of what comes next." description="Regular contributor to national discourse on digital assets, fintech regulation, and Pakistan’s evolving financial infrastructure." icon={Newspaper} sealText="INSIGHTS & MEDIA · COLUMNS · INTERVIEWS · MS LAW · " />
+  <PageHero label="Insights & Media" title={insightsContent.heading} description={<>Analysis of Pakistan's virtual assets framework, stablecoins and the future of payments by <a href="/our-team/">Mariam Saleem</a>, Founder of MS Law, who writes a syndicated column for The News.</>} icon={Newspaper} sealText="INSIGHTS & MEDIA · COLUMNS · INTERVIEWS · MS LAW · " />
   <LeadStory />
   <section className="ms-section ms-screen ms-ins-archive" aria-labelledby="ins-archive-title">
    <div className="ms-wrap">
     <div className="ms-ins-archive-head" data-reveal>
-     <div><span className="ms-kicker">Published analysis</span><h2 id="ins-archive-title">Columns <span className="ms-accent">and interviews.</span></h2></div>
-     <p>Syndicated columns in The News analyzing Pakistan’s digital asset regulatory framework, global trends in virtual asset regulation, and the future of cross-border payments.</p>
+     <div><span className="ms-kicker">Mariam Saleem</span><h2 id="ins-archive-title">Published <span className="ms-accent">Analysis</span></h2></div>
+     <div className="ms-ins-newsletter">
+      <h3>{insightsContent.newsletterHeading}</h3>
+      <p>{insightsContent.newsletter}</p>
+      <a href={insightsContent.newsletterUrl ?? insightsContent.linkedin} target="_blank" rel="noreferrer">{insightsContent.newsletterUrl ? "Subscribe on LinkedIn" : "View on LinkedIn"} <ArrowUpRight size={16} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>
+     </div>
     </div>
     <InsightsExplorer />
+    <div className="ms-ins-other-writing" data-reveal>
+     <h3>{insightsContent.otherWritingHeading}</h3>
+     <ul className="ms-ins-cards">
+      {environmentalArticles.map(article => <li key={article.url}>
+       <a className="ms-ins-card" href={article.url} target="_blank" rel="noreferrer">
+        <span className="ms-ins-card-thumb" aria-hidden="true"><img src={`/images/${article.image}`} alt="" /></span>
+        <span className="ms-ins-card-text"><span className="ms-ins-card-meta">The News · <time>{article.date}</time></span><span className="ms-ins-card-title">{article.title}</span></span>
+        <ArrowUpRight className="ms-ins-card-go" size={18} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span>
+       </a>
+      </li>)}
+     </ul>
+    </div>
    </div>
   </section>
   <MediaReel />
@@ -55,7 +71,7 @@ function LeadStory() {
      <p className="ms-ins-lead-dek" style={order(2)}>{lead.description}</p>
      <div className="ms-ins-lead-foot" style={order(3)}>
       <p className="ms-ins-lead-meta">{lead.source}<i aria-hidden="true" /><time>{lead.date}</time></p>
-      <a className="ms-btn ms-btn-light" href={lead.url} target="_blank" rel="noreferrer">Read the article<span className="sr-only">: {lead.title} (opens in a new tab)</span> <ArrowUpRight size={17} aria-hidden="true" /></a>
+      <a className="ms-btn ms-btn-light" href={lead.url} target="_blank" rel="noreferrer">Read article<span className="sr-only">: {lead.title} (opens in a new tab)</span> <ArrowUpRight size={17} aria-hidden="true" /></a>
      </div>
     </div>
    </article>
@@ -97,9 +113,8 @@ function MediaReel() {
  const pad = (n: number) => String(n).padStart(2, "0");
  return <section className="ms-section ms-screen ms-ins-reel" aria-labelledby="ins-reel-title">
   <div className="ms-wrap ms-ins-reel-head" data-reveal>
-   <div><span className="ms-kicker ms-kicker-light">Speaking & broadcast</span><h2 id="ins-reel-title">Beyond the headlines. <span className="ms-accent">Into the conversation.</span></h2></div>
+   <div><span className="ms-kicker ms-kicker-light">Speaking & broadcast</span><h2 id="ins-reel-title">Television, Podcasts <span className="ms-accent">and Panels</span></h2></div>
    <div className="ms-ins-reel-side">
-    <p>Regular contributor to television programs, industry panels, and podcasts on digital asset regulation and financial innovation.</p>
     <div className="ms-ins-reel-controls">
      <p className="ms-ins-reel-count" aria-hidden="true"><strong>{pad(state.index + 1)}</strong> / {pad(media.length)}</p>
      <div className="ms-ins-reel-buttons">
@@ -119,10 +134,10 @@ function MediaReel() {
       <span className="ms-ins-tile-glyph" aria-hidden="true"><Glyph size={22} fill={m.url ? "currentColor" : "none"} strokeWidth={m.url ? 1.5 : 1.6} /></span>
      </div>
      <div className="ms-ins-tile-body">
-      <p className="ms-ins-tile-meta">{m.outlet}<i aria-hidden="true" />{m.date}</p>
+      <p className="ms-ins-tile-meta">{m.outlet}{m.date && <><i aria-hidden="true" />{m.date}</>}</p>
       <h3>{m.title}</h3>
       {m.url
-       ? <span className="ms-ins-tile-cta">Watch the recording <ArrowUpRight size={16} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></span>
+       ? <span className="ms-ins-tile-cta">Watch <ArrowUpRight size={16} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></span>
        : <span className="ms-ins-tile-cta is-static">Recording available on request</span>}
      </div>
     </>;

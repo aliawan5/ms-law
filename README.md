@@ -1,41 +1,52 @@
-# MS Law frontend
+# MS Law website
 
-MS LAW - FRONTEND ONLY
+React + TypeScript + Vite. Every page is prerendered to static HTML at build time.
 
-Local React + TypeScript + Vite website. Nothing has been published.
+## Run
 
-RUN
-  npm.cmd install
-  npm.cmd run dev
-  Open the local URL printed by Vite (normally http://127.0.0.1:5173).
+```
+npm.cmd install
+npm.cmd run dev        # http://127.0.0.1:5173
+```
 
-BUILD AND PREVIEW
-  npm.cmd run build
-  npm.cmd run preview
+## Build and publish
 
-The dist folder contains only static HTML, CSS, JavaScript and assets. Each known page has its own index.html for direct navigation on static hosting. Configure the host to use 404.html for missing pages when you choose to publish. JavaScript is required to render the site.
+```
+npm.cmd run build      # type-check, build, then prerender every page
+npm.cmd run preview    # check the built site locally
+```
 
-CONTACT FORM
-The form retains its original appearance. Submitting it shows a local notice that the form is not connected; typed information is not saved or sent. Email links still open the visitor's email application. There are no APIs, databases, authentication, connectors, Workers or deployment bindings in this project.
+Upload the `dist` folder. It contains one `index.html` per page (for example `dist/about/index.html`),
+`404.html`, `sitemap.xml` and `robots.txt`. Configure the host to serve `404.html` for missing pages.
+The site's canonical domain is https://mariamsaleemlaw.com (set in `lib/routes.ts`).
 
-EDITING
-  app/main.tsx                 Frontend page selection and document titles
-  lib/routes.ts                Paths emitted as static entry points
-  lib/content.ts               Services, publications and external links
-  lib/practice-detail.ts       Extra practice-page content (frameworks, checklists, scenarios)
-  components/site/home.tsx     Home page (hero and story); home-cards.tsx holds the other home sections
-  components/site/hero-*.tsx   Home hero artwork options
-  components/site/*.tsx        One file per page: about, team, services, insights, contact, privacy
-  components/site/shell.tsx    Navbar, footer and scroll animations
-  app/brand.css                Design system, palette tokens and shared/home styles
-  app/pages/*.css              Page-specific styles
-  public/                      Images, fonts, favicon and robots.txt
+## Search engines
 
-CONTENT NOTES
-Founder messaging remains proposed copy, and testimonials await approved client feedback. Review the privacy notice and public copy before launch. The preview currently disables indexing in index.html and public/robots.txt.
+- Indexing is on: no `noindex`, and `robots.txt` allows all crawlers and lists the sitemap.
+- Each page's title, description, canonical address and structured data are defined in `app/site.tsx`.
+- `scripts/prerender.mjs` writes the full page HTML, head tags and `sitemap.xml` into `dist`.
 
-SOURCES
-Company content and portraits: https://mariamsaleemlaw.com/
-Visual direction reference: https://sourcepivot.com/
-Illustrative architectural photography: Unsplash.
-Manrope fonts: Google Fonts, with license in public/fonts/OFL-Manrope.txt.
+## Forms
+
+The contact form and the home page "PVARA Activity Brief" popup send enquiries straight to
+info@mariamsaleemlaw.com through FormSubmit (`lib/send-enquiry.ts`). The first submission triggers a
+one-time activation email to that inbox; click Activate to start receiving enquiries.
+
+## Where things are
+
+| Path | Contents |
+| --- | --- |
+| `app/site.tsx` | Page list: titles, descriptions, canonical URLs, schemas |
+| `app/main.tsx` | Browser entry: head tags and hydration |
+| `app/render-page.tsx`, `scripts/prerender.mjs` | Build-time prerender and sitemap |
+| `app/brand.css` | Design system, palette tokens, header, hero, footer, shared styles |
+| `app/pages/*.css` | Page-specific styles |
+| `components/site/` | One file per page plus shell (header/footer), logo, hero art, motion helpers (`fx.tsx`) |
+| `lib/*-content.ts` | Page copy supplied in the SEO content documents |
+| `lib/routes.ts` | Paths, canonical service addresses, site URL |
+| `public/` | Images, logo masks, favicons, fonts (with licence), robots.txt |
+
+## Credits
+
+Manrope font: Google Fonts, licence in `public/fonts/OFL-Manrope.txt`.
+Photo credits are recorded in the `SOURCES.md` files next to the images.
