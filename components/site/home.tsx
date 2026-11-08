@@ -41,7 +41,7 @@ function Hero() {
   <div className="ms-wrap ms-hero-inner">
    <div className="ms-hero-copy">
     <h1>
-     <span className="ms-line"><span className="ms-sweep" style={delay(.15)}>Crypto and <span className="ms-hero-mark">Virtual Assets<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 17C70 7 170 3 296 11" pathLength={1} /></svg></span> </span></span>
+     <span className="ms-line"><span className="ms-sweep" style={delay(.15)}>Crypto and Virtual Assets </span></span>
      <span className="ms-line"><span className="ms-sweep" style={delay(.28)}>Lawyers in Pakistan</span></span>
     </h1>
     <p className="ms-hero-fade" style={delay(.55)}>{hero.body}</p>

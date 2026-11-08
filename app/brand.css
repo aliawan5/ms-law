@@ -629,14 +629,8 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
 .ms-orbit-nodes button.is-active .ms-orbit-node-icon,.ms-orbit-nodes button:hover .ms-orbit-node-icon{color:var(--navy-900)}
 .ms-ticket.is-featured .ms-ticket-row,.ms-ticket.is-featured .ms-ticket-stub-label,.ms-ticket.is-featured li svg{color:var(--ms-accent)}
 
-/* ---------- Home hero: badge and steel underline ---------- */
+/* ---------- Home hero headline ---------- */
 .ms-hero .ms-line{padding-bottom:.18em;margin-bottom:-.18em}
-.ms-hero-mark{position:relative;display:inline}
-.ms-hero-mark svg{position:absolute;left:-2%;bottom:-.16em;width:104%;height:.26em;overflow:visible;pointer-events:none}
-.ms-hero-mark path{fill:none;stroke:var(--ms-accent);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:ms-draw 1.2s var(--ms-ease) 1.15s forwards}
-@media(prefers-reduced-motion:reduce){
- .ms-hero-mark path{animation:none;stroke-dashoffset:0}
-}
 /* Accent on the inner pages' own small labels and icons. */
 .ms-team-note-glyph{color:var(--ms-accent)}
 .ms-contact-steps h3::before{background:var(--ms-accent)}
@@ -720,7 +714,6 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
 /* A band of sand light passes across the headline once, then it settles to white. */
 .ms-hero .ms-sweep{background:linear-gradient(105deg,#fff 0 40%,var(--ms-sand) 47%,#fff7e8 50%,var(--ms-sand) 53%,#fff 60% 100%);background-size:320% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:ms-rise 1.15s var(--ms-ease) var(--d,0s) forwards,ms-sweep 2s cubic-bezier(.45,0,.2,1) calc(var(--d,0s) + 1.1s) forwards}
 @keyframes ms-sweep{to{background-position:0 0}}
-.ms-hero-mark path{stroke:var(--ms-sand);animation-delay:1.7s}
 /* Buttons */
 .ms-btn-sand{position:relative;overflow:hidden;isolation:isolate;background:var(--ms-sand);color:var(--navy-900);transition:background .35s,box-shadow .35s}
 .ms-btn-sand::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(110deg,transparent 30%,#fffaf2b3 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s var(--ms-ease)}
@@ -849,7 +842,6 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
 
 .is-home .ms-hero .ms-line{white-space:normal}
 .is-home .ms-hero .ms-sweep{max-width:100%}
-.is-home .ms-hero-mark{white-space:nowrap}
 
 .is-home .ms-hero-actions{gap:18px 26px;margin-top:26px}
 
@@ -894,3 +886,77 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
 }
 
 @media(min-width:901px) and (max-width:1180px){.ms-header-logo .ms-logo-word{width:170px}.ms-header-logo .ms-logo{gap:11px}}
+
+/* ==========================================================================
+   Large screens: the layout was designed for a 1328px content column. On wide
+   monitors the whole column (and the header) scales up in steps, so pages fill
+   the screen in the same proportions instead of shrinking into the middle.
+   Section heights still use the real screen height.
+   ========================================================================== */
+@media(min-width:1680px){:root{--ms-zoom:1.12}}
+@media(min-width:1900px){:root{--ms-zoom:1.24}}
+@media(min-width:2200px){:root{--ms-zoom:1.4}}
+@media(min-width:2500px){:root{--ms-zoom:1.58}}
+@media(min-width:3200px){:root{--ms-zoom:1.95}}
+@media(min-width:1680px){
+ .ms-wrap,.ms-header-inner{zoom:var(--ms-zoom)}
+}
+
+/* ==========================================================================
+   Fit-to-screen fixes (2026-11-08)
+   ========================================================================== */
+/* About › Regulators and frameworks: the orbit sizes its nodes, labels and core text from its own width,
+   and each label sits on a navy pill so the ring line never runs through the words. */
+.ms-orbit-stage{container-type:inline-size}
+@media(min-width:641px){
+ .ms-orbit-nodes button{width:clamp(88px,27cqi,150px);gap:clamp(4px,1.4cqi,8px);transform:translate(-50%,calc(clamp(38px,9.5cqi,56px) / -2))}
+ .ms-orbit-stage.will-reveal:not(.revealed) .ms-orbit-nodes button{transform:translate(-50%,calc(clamp(38px,9.5cqi,56px) / -2)) scale(.4)}
+ .ms-orbit-node-icon{width:clamp(38px,9.5cqi,56px);height:clamp(38px,9.5cqi,56px)}
+ .ms-orbit-node-icon svg{width:clamp(14px,3.4cqi,20px);height:auto}
+ .ms-orbit-node-label{padding:2px 8px;border-radius:8px;background:var(--navy-900);font-size:clamp(10.5px,2.5cqi,14px);text-wrap:balance}
+ .ms-orbit-core{gap:clamp(2px,1cqi,6px)}
+ .ms-orbit-core-icon{width:clamp(34px,8.5cqi,48px);height:clamp(34px,8.5cqi,48px)}
+ .ms-orbit-core-kicker{font-size:clamp(9px,2cqi,11px)}
+ .ms-orbit-core h3{font-size:clamp(15px,4.4cqi,26px)}
+ .ms-orbit-links a{font-size:clamp(11px,2.4cqi,14px);text-align:center}
+}
+/* The labels need room below the lowest node. */
+.ms-orbit-layout{padding-bottom:clamp(8px,3vh,32px)}
+
+/* Footer call to action: one column on tablets and phones on every page, so the button and email never squeeze. */
+@media(max-width:900px){
+ .ms-cta-card{grid-template-columns:minmax(0,1fr);align-items:start}
+ .ms-footer-cta-side{min-width:0}
+ .ms-footer-mail{overflow-wrap:anywhere}
+}
+
+/* Tablets and phones: sections take the height of their content (no forced full-screen gaps). */
+@media(max-width:900px){
+ main>.ms-section.ms-screen{min-height:0}
+}
+
+/* Testimonial dots share the space left beside the buttons instead of pushing them off the card. */
+.ms-voices-controls{min-width:0}
+.ms-voices-dots{flex:1 1 auto;min-width:0}
+.ms-voices-dots button{flex:0 1 52px;min-width:16px}
+.ms-voices-arrows{flex-shrink:0}
+
+/* Home hero on tablets and phones: the pillar sits below the text instead of behind it. */
+@media(max-width:900px){
+ .is-home .ms-hero-inner{gap:clamp(20px,4vh,40px)}
+ .is-home .ms-art{position:relative;right:auto;bottom:auto;z-index:auto;justify-self:center;--h:min(34svh,380px);opacity:1;margin:0 auto}
+}
+/* Photo credit wraps onto two lines on small phones without the lines overlapping. */
+.ms-about-place small{line-height:1.55}
+/* FAQ on small laptops and landscape tablets: both columns may shrink, and long questions wrap. */
+.ms-faq-grid>*{min-width:0}
+@media(min-width:901px) and (max-width:1180px){
+ .ms-faq-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .ms-faq-list button{height:auto;min-height:52px;padding-block:12px}
+ .ms-faq-q{white-space:normal;overflow:visible;text-overflow:clip}
+}
+/* Home hero on small laptops: the buttons wrap before they reach the pillar's left-hand notes. */
+@media(min-width:901px) and (max-width:1180px){
+ .is-home .ms-hero-actions{max-width:min(100%,calc(100vw - 600px))}
+}
+.ms-about-place small a{white-space:nowrap}

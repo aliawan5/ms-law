@@ -309,3 +309,15 @@ a.ms-ins-tile:focus-visible{outline:2px solid var(--steel);outline-offset:3px}
 .ms-contact-composed svg{flex-shrink:0;margin-top:2px}
 .ms-contact-composed.is-sent{border-left-color:#b8945b}
 .ms-contact-composed.is-error{border-left-color:#c2564a}
+
+/* The lead card keeps the column width; its minimum height must never widen it past the screen. */
+.ms-ins-lead-card{width:100%;min-width:0}
+/* Small laptops and landscape tablets: the featured article spans the width (image beside text)
+   and the other articles sit in two roomy columns beneath it. */
+@media(min-width:901px) and (max-width:1240px){
+ .ms-ins-ed-grid,.ms-ins-archive .ms-ins-ed-grid{grid-template-columns:minmax(0,1fr);height:auto;min-height:0}
+ .ms-ins-ed-grid .ms-ins-feature{flex-direction:row;min-height:320px}
+ .ms-ins-ed-grid .ms-ins-feature-media{flex:0 0 46%}
+ .ms-ins-ed-grid .ms-ins-feature-body{flex:1;justify-content:center}
+ .ms-ins-cards{grid-auto-rows:auto}
+}

@@ -14,17 +14,19 @@ const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefe
 
 /** Spotlight: writes the pointer position into --mx / --my on the element (Vengeance "Cursor Card"). */
 export function spotlight(e: PointerEvent<HTMLElement>) {
- const el = e.currentTarget, r = el.getBoundingClientRect();
- el.style.setProperty("--mx", `${e.clientX - r.left}px`);
- el.style.setProperty("--my", `${e.clientY - r.top}px`);
+ const el = e.currentTarget, r = el.getBoundingClientRect(), z = zoomOf(el);
+ el.style.setProperty("--mx", `${(e.clientX - r.left) / z}px`);
+ el.style.setProperty("--my", `${(e.clientY - r.top) / z}px`);
 }
+/** On large screens the content column is CSS-zoomed; pointer offsets must be converted back to CSS pixels. */
+const zoomOf = (el: Element) => (el as Element & { currentCSSZoom?: number }).currentCSSZoom ?? 1;
 
 /** Glow border across a grid: every [data-glow] child gets its own pointer offset (Vengeance "Glow Border Card"). */
 export function glowGrid(e: PointerEvent<HTMLElement>) {
  e.currentTarget.querySelectorAll<HTMLElement>("[data-glow]").forEach(el => {
-  const r = el.getBoundingClientRect();
-  el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-  el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  const r = el.getBoundingClientRect(), z = zoomOf(el);
+  el.style.setProperty("--mx", `${(e.clientX - r.left) / z}px`);
+  el.style.setProperty("--my", `${(e.clientY - r.top) / z}px`);
  });
 }
 
