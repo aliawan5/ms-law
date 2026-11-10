@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
 import Link from "./link";
-import { ArrowRight, ArrowUpRight, Coins, Globe, Briefcase, ArrowLeftRight, Newspaper, Tv, Presentation, ArrowLeft, Pause, Play, type LucideIcon } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Coins, Globe, Briefcase, ArrowLeftRight, Newspaper, Tv, Presentation, type LucideIcon } from "lucide-react";
 import { articles, services } from "@/lib/content";
 import { founder, homePractices, cryptoAnswer, homeFaqs } from "@/lib/home-content";
 import { SplitWords, Roll, Tilt, RollingNumber, spotlight, glowGrid, vars } from "./fx";
@@ -211,46 +211,24 @@ function StackCard({ card: [n, title, sub, body], i, p }: { card: readonly [stri
  </motion.article>;
 }
 
-/* ---------- Testimonials (the original design) ---------- */
-// The first quote is a real client testimonial; the entries marked placeholder must be replaced or removed before launch.
-const testimonials: { quote: string; name: string; role: string; placeholder?: boolean }[] = [
- { quote: "Mariam was very professional with her approach and guided me very elaborately given the existing regulation by the regulator at the time. She introduced me to some very relevant personal industry contacts to get insights and exchange notes.", name: "Group CEO", role: "Pixel Park STZE" },
- { quote: "Mariam brought clarity to a regulatory question we had struggled to frame. Her advice was precise, commercial and easy to act on.", name: "Client name", role: "Founder, digital asset platform", placeholder: true },
- { quote: "Her understanding of both the Pakistani market and international practice made her an invaluable partner on our cross-border transaction.", name: "Client name", role: "Director, international investor", placeholder: true },
- { quote: "Responsive, considered and genuinely invested in our success. We always knew where we stood and what came next.", name: "Client name", role: "General Counsel, fintech company", placeholder: true },
-];
+/* ---------- Testimonial (the original design): the client's approved quote ---------- */
+const testimonial = { quote: "Mariam was very professional with her approach and guided me very elaborately given the existing regulation by the regulator at the time. She introduced me to some very relevant personal industry contacts to get insights and exchange notes.", name: "Group CEO", role: "Pixel Park STZE" };
 
 export function Testimonials() {
- const [index, setIndex] = useState(0);
- const [hovered, setHovered] = useState(false);
- const [stopped, setStopped] = useState(false);
- const [touched, setTouched] = useState(false);
- const paused = hovered || stopped;
- const go = (step: number) => setIndex(i => (i + step + testimonials.length) % testimonials.length);
- const choose = (step: number | null, to?: number) => { setTouched(true); if (step === null) setIndex(to!); else go(step); };
- // The active dot's fill animation is the timer: when it finishes, the next quote shows.
- return <section className={`ms-section ms-screen ms-voices${paused ? " is-paused" : ""}`} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onFocus={() => setHovered(true)} onBlur={() => setHovered(false)}>
+ return <section className="ms-section ms-screen ms-voices">
   <div className="ms-wrap ms-voices-grid">
    <div className="ms-voices-intro" data-reveal>
     <span className="ms-kicker">Client perspectives</span>
     <h2>In their <span className="ms-accent">own words.</span></h2>
     <p>What it is like to work with Mariam, from the founders, investors and businesses she advises.</p>
    </div>
-   <div className="ms-voices-stage" data-reveal style={vars({ "--d": ".1s" })}>
+   <div className="ms-voices-stage is-single" data-reveal style={vars({ "--d": ".1s" })}>
     <span className="ms-quote-mark" aria-hidden="true">“</span>
-    <div className="ms-quotes" aria-live={touched ? "polite" : "off"}>
-     {testimonials.map((t, i) => <figure key={i} className={i === index ? "is-active" : ""} aria-hidden={i !== index}>
-      <blockquote>{t.quote}</blockquote>
-      <figcaption><strong>{t.name}</strong><span>{t.role}{t.placeholder ? " · Placeholder" : ""}</span></figcaption>
-     </figure>)}
-    </div>
-    <div className="ms-voices-controls">
-     <div className="ms-voices-dots">{testimonials.map((_, i) => <button key={i} type="button" className={i === index ? "is-active" : ""} aria-label={`Show testimonial ${i + 1}`} aria-current={i === index} onClick={() => choose(null, i)}><i onAnimationEnd={() => go(1)} /></button>)}</div>
-     <div className="ms-voices-arrows">
-      <button type="button" aria-pressed={stopped} aria-label={stopped ? "Resume rotation" : "Pause rotation"} onClick={() => { setStopped(!stopped); setTouched(true); }}>{stopped ? <Play size={16} /> : <Pause size={16} />}</button>
-      <button type="button" aria-label="Previous testimonial" onClick={() => choose(-1)}><ArrowLeft size={18} /></button>
-      <button type="button" aria-label="Next testimonial" onClick={() => choose(1)}><ArrowRight size={18} /></button>
-     </div>
+    <div className="ms-quotes">
+     <figure className="is-active">
+      <blockquote>{testimonial.quote}</blockquote>
+      <figcaption><strong>{testimonial.name}</strong><span>{testimonial.role}</span></figcaption>
+     </figure>
     </div>
    </div>
   </div>

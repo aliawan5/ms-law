@@ -23,9 +23,6 @@ export const articles: Article[] = [
 export const linkedin = "https://www.linkedin.com/in/mariam-saleem-855220285/";
 /** The firm's company page (footer icon); confirmed by the client. */
 export const firmLinkedin = "https://www.linkedin.com/company/mslaw/";
-// TODO: replace with the firm's real profile URLs; they were not in the reference content.
-export const instagram = "https://www.instagram.com/";
-export const xProfile = "https://x.com/";
 
 /** Speaking and broadcast appearances (from the insights-and-media reference page).
  *  Items without a public recording link render as "Recording available on request". */

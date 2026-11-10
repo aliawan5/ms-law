@@ -563,8 +563,6 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
 
 /* ---------- 1. What she does: expanding panels ---------- */
 
-@keyframes ms-panel-timer{to{transform:scaleX(1)}}
-
 /* ---------- Testimonials (restored original design) ---------- */
 .ms-voices{background:#fff}
 .ms-voices-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:96px;align-items:center}
@@ -579,17 +577,7 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
 .ms-quotes figcaption::before{content:'';width:32px;height:1px;background:var(--steel)}
 .ms-quotes figcaption strong{font-weight:650;white-space:nowrap}
 .ms-quotes figcaption span{color:var(--steel-600)}
-.ms-voices-controls{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:48px;padding-top:28px;border-top:1px solid var(--mist-line)}
-.ms-voices-dots{display:flex;gap:10px}
-.ms-voices-dots button{width:52px;height:24px;padding:0;border:0;background:none;display:flex;align-items:center}
-.ms-voices-dots i{position:relative;display:block;width:100%;height:2px;border-radius:2px;background:var(--mist-line);overflow:hidden}
-.ms-voices-dots i::after{content:'';position:absolute;inset:0;background:var(--navy-900);transform:scaleX(0);transform-origin:left}
-.ms-voices-dots .is-active i::after{transform:scaleX(1)}
-.ms-voices-stage.revealed .ms-voices-dots .is-active i::after{transform:scaleX(0);animation:ms-progress 7s linear forwards}
-.ms-voices.is-paused .ms-voices-dots i::after{animation-play-state:paused}
-.ms-voices-arrows{display:flex;gap:10px}
-.ms-voices-arrows button{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;border:1px solid color-mix(in srgb,var(--steel) 50%,transparent);background:#fff;color:var(--navy-900);transition:background .3s,color .3s,border-color .3s}
-.ms-voices-arrows button:hover{background:var(--navy-900);color:#fff;border-color:var(--navy-900)}
+
 .ms-voices .ms-voices-stage{padding-top:clamp(112px,15vh,136px)}
 .ms-voices-intro>p{margin-top:24px;max-width:380px;font-size:16px;line-height:1.75;color:var(--body-ink)}
 .ms-voices-grid>*{min-width:0}
@@ -602,7 +590,7 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
  .ms-quotes figcaption span{flex-basis:100%;padding-left:46px}
  .ms-voices-stage{padding:76px 24px 28px;border-radius:22px}
  .ms-quote-mark{top:12px;left:20px;font-size:150px}
- .ms-voices-dots button{width:36px}
+ 
 }
 
 /* Home page sits on light grey; panels that were grey on white become white on grey. */
@@ -767,10 +755,6 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
 
 .ms-header.is-scrolled .ms-header-inner,.ms-header.is-open .ms-header-inner{background:#fffefbf2}
 
-.is-home .ms-voices-arrows button{background:var(--ms-foil);background-size:160% 100%;border-color:#b8945b;color:#0f1e33;transition:background-position .6s var(--ms-ease),box-shadow .3s}
-.is-home .ms-voices-arrows button:hover{background:var(--ms-foil);background-size:160% 100%;background-position:100% 0;color:#0f1e33;border-color:#b8945b;box-shadow:0 0 0 5px #b8945b2e}
-.is-home .ms-voices-dots .is-active i::after,.is-home .ms-voices-dots i::after{background:#b8945b}
-
 /* ---------- Home hero art: the ledger pillar ---------- */
 .ms-art{--h:min(560px,64vh);position:relative;justify-self:end;height:var(--h);aspect-ratio:300/540;translate:0 calc(var(--sp,0) * -40px)}
 .ms-art svg{display:block;width:100%;height:100%;overflow:visible}
@@ -830,10 +814,6 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
  .is-home .ms-cta-card{grid-template-columns:minmax(0,1fr)}
  .is-home .ms-footer-cta-side{min-width:0}
  .is-home .ms-footer-mail{overflow-wrap:anywhere}
-}
-@media(max-width:380px){
- .is-home .ms-voices-controls{flex-wrap:wrap;gap:12px}
- .is-home .ms-voices-arrows{margin-left:auto}
 }
 
 /* Homepage presentation: retain the supplied copy, palette, artwork and card shapes. */
@@ -935,11 +915,6 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
  main>.ms-section.ms-screen{min-height:0}
 }
 
-/* Testimonial dots share the space left beside the buttons instead of pushing them off the card. */
-.ms-voices-controls{min-width:0}
-.ms-voices-dots{flex:1 1 auto;min-width:0}
-.ms-voices-dots button{flex:0 1 52px;min-width:16px}
-.ms-voices-arrows{flex-shrink:0}
 
 /* Home hero on tablets and phones: the pillar sits below the text instead of behind it. */
 @media(max-width:900px){
@@ -960,3 +935,9 @@ body{background:#fff;color:var(--navy-900);font-family:var(--ms-sans)}
  .is-home .ms-hero-actions{max-width:min(100%,calc(100vw - 600px))}
 }
 .ms-about-place small a{white-space:nowrap}
+/* A single testimonial: no rotation controls, so the card closes a little lower. */
+.ms-voices-stage.is-single{padding-bottom:clamp(40px,6vh,64px)}
+/* Footer "Connect": the column is as wide as its heading and the icon sits centred beneath it.
+   The negative margin cancels the letter-spacing after the last letter so the centre is true. */
+.ms-footer-col.is-connect{width:max-content;align-items:center}
+.ms-footer-col.is-connect>span{margin-right:-.12em}

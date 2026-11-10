@@ -288,4 +288,4 @@ a:hover .fx-roll>span,a:focus-visible .fx-roll>span{transform:translateY(-100%)}
 /* Header: monogram only */
 .ms-header-logo .ms-logo-mark{width:50px;height:50px}
 @media(max-width:640px){.ms-header-logo .ms-logo-mark{width:44px;height:44px}}
-@media(max-width:640px){.is-home .ms-voices-dots{gap:6px}.is-home .ms-voices-dots button{width:24px}.is-home .ms-voices-controls{gap:12px}}
+
